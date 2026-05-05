@@ -14,12 +14,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewFrame = document.getElementById('preview-frame');
     const previewTitle = document.getElementById('preview-title');
 
-    // Comment Elements
-    const commentModal = document.getElementById('comment-modal');
+    // Comment Functionality
+    const commentModal   = document.getElementById('comment-modal');
     const btnOpenComment = document.getElementById('btn-open-comment');
     const btnCancelComment = document.getElementById('btn-cancel-comment');
     const btnSubmitComment = document.getElementById('btn-submit-comment');
-    const commentInput = document.getElementById('comment-input');
+    const commentInput   = document.getElementById('comment-input');
+
+    if (btnOpenComment) {
+        btnOpenComment.addEventListener('click', () => {
+            if (commentModal) commentModal.style.display = 'flex';
+            if (commentInput) { commentInput.value = ''; commentInput.focus(); }
+        });
+    }
+
+    if (btnCancelComment) {
+        btnCancelComment.addEventListener('click', () => {
+            if (commentModal) commentModal.style.display = 'none';
+        });
+    }
+
+    if (btnSubmitComment) {
+        btnSubmitComment.addEventListener('click', async () => {
+            const comment = commentInput ? commentInput.value.trim() : '';
+            if (!comment) return;
+
+            btnSubmitComment.disabled = true;
+            btnSubmitComment.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังส่ง...';
+
+            try {
+                const response = await fetch('/api/comment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fullName: selectedPerson ? selectedPerson.fullName : '',
+                        comment: comment
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('ส่งข้อความเรียบร้อยแล้ว ขอบคุณสำหรับข้อมูลครับ');
+                    if (commentModal) commentModal.style.display = 'none';
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.message);
+                }
+            } catch (error) {
+                alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
+            } finally {
+                btnSubmitComment.disabled = false;
+                btnSubmitComment.innerHTML = '<i class="fas fa-paper-plane"></i> ส่งข้อความ';
+            }
+        });
+    }
 
     let allPeople = [];
     let selectedPerson = null;
@@ -183,6 +229,9 @@ document.addEventListener('DOMContentLoaded', () => {
         fileLinksEl.innerHTML = html;
         downloadArea.style.display = 'block';
         downloadArea.scrollIntoView({ behavior: 'smooth' });
+
+        // แสดงปุ่ม comment หลัง verify สำเร็จ
+        if (btnOpenComment) btnOpenComment.style.display = 'flex';
     }
 
     // Preview handling
@@ -238,49 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btnElement.style.pointerEvents = 'auto';
         }
     };
-
-    // Comment Functionality
-    btnOpenComment.addEventListener('click', () => {
-        commentModal.style.display = 'flex';
-        commentInput.value = '';
-        commentInput.focus();
-    });
-
-    btnCancelComment.addEventListener('click', () => {
-        commentModal.style.display = 'none';
-    });
-
-    btnSubmitComment.addEventListener('click', async () => {
-        const comment = commentInput.value.trim();
-        if (!comment) return;
-
-        btnSubmitComment.disabled = true;
-        btnSubmitComment.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังส่ง...';
-
-        try {
-            const response = await fetch('/api/comment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    fullName: selectedPerson.fullName,
-                    comment: comment
-                })
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                alert('ส่งข้อความเรียบร้อยแล้ว ขอบคุณสำหรับข้อมูลครับ');
-                commentModal.style.display = 'none';
-            } else {
-                alert('เกิดข้อผิดพลาด: ' + data.message);
-            }
-        } catch (error) {
-            alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
-        } finally {
-            btnSubmitComment.disabled = false;
-            btnSubmitComment.innerText = 'ส่งข้อความ';
-        }
-    });
 
     // Hide suggestions when clicking outside
     document.addEventListener('click', (e) => {

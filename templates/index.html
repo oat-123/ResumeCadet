@@ -67,7 +67,32 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}?v=1.1"></script>
+    <!-- Comment Floating Button -->
+    <button id="btn-open-comment" class="btn-float-comment" style="display:none;">
+        <i class="fas fa-comment-dots"></i>
+        <span>ติดต่อแก้ไขข้อมูล</span>
+    </button>
+
+    <!-- Comment Modal -->
+    <div class="modal-overlay" id="comment-modal">
+        <div class="modal-content">
+            <div class="modal-title">
+                <i class="fas fa-comment-dots" style="margin-right:0.5rem;color:#3b82f6;"></i>
+                ติดต่อแก้ไขข้อมูล
+            </div>
+            <div class="modal-subtitle">ข้อความจะถูกบันทึกเข้าระบบโดยอัตโนมัติ</div>
+            <textarea id="comment-input" class="modal-input comment-textarea"
+                placeholder="พิมพ์ข้อความที่ต้องการส่ง..."></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" id="btn-cancel-comment">ยกเลิก</button>
+                <button class="btn btn-confirm" id="btn-submit-comment">
+                    <i class="fas fa-paper-plane"></i> ส่งข้อความ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=1.2"></script>
 </body>
 
 </html>
