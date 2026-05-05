@@ -7,3 +7,4 @@ app.py
 
 .vercel
 .env*.local
+credentials.json
