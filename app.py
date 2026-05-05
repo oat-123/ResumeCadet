@@ -81,8 +81,12 @@ def verify_id():
         return jsonify({"success": True, "files": files})
     return jsonify({"success": False, "message": "รหัสบัตรประชาชนไม่ถูกต้อง"}), 401
 
-@app.route('/preview/<folder>/<filename>')
+from urllib.parse import unquote
+
+@app.route('/preview/<path:folder>/<path:filename>')
 def preview_file(folder, filename):
+    folder = unquote(folder)
+    filename = unquote(filename)
     provided_pass = request.args.get('pass')
     try:
         PASSWORDS_MAP = load_passwords()
@@ -93,8 +97,10 @@ def preview_file(folder, filename):
         return send_from_directory(os.path.join(BASE_DIR, folder), filename)
     return "Unauthorized", 401
 
-@app.route('/download/<folder>/<filename>')
+@app.route('/download/<path:folder>/<path:filename>')
 def download_file(folder, filename):
+    folder = unquote(folder)
+    filename = unquote(filename)
     provided_pass = request.args.get('pass')
     try:
         PASSWORDS_MAP = load_passwords()
