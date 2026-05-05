@@ -35,7 +35,11 @@ def load_passwords():
     passwords = {}
     for row in rows:
         name = str(row.get('ยศ/ชื่อ – สกุล', '')).strip()
-        pid  = str(row.get('หมายเลขประจำตัวประชาชน', '')).strip()
+        raw  = row.get('หมายเลขประจำตัวประชาชน', '')
+        try:
+            pid = str(int(float(str(raw)))).strip()
+        except:
+            pid = str(raw).strip()
         if name and pid:
             passwords[normalize_name(name)] = pid
     return passwords
