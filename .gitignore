@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.vercel
+venv/
+run.bat
+app.py
+
+.vercel
+.env*.local

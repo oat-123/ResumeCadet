@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S - ระบบค้นหาประวัติ นนร.</title>
+    <meta name="description" content="ระบบค้นหาและดาวน์โหลดเอกสารประวัติส่วนตัว นนร.ชั้นปีที่ ๕">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Prompt:wght@300;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}?v=2.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2.0">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>ระบบค้นหาประวัติ ฉก. ของ นนร.</h1>
+            <p class="subtitle">ระบุชื่อ นนร.เพื่อตรวจสอบและดาวน์โหลดเอกสาร</p>
+        </header>
+
+        <div class="search-container">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-input" placeholder="ค้นหาชื่อ..." autocomplete="off">
+                <button id="btn-clear" class="btn-clear"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="suggestions"></div>
+        </div>
+
+        <div id="download-area">
+            <div class="person-card">
+                <div class="person-name" id="selected-name">ชื่อ นามสกุล</div>
+                <div class="file-links" id="file-links">
+                    <!-- Links will appear here after verification -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Preview Overlay -->
+    <div id="preview-overlay" class="preview-overlay">
+        <div class="preview-top-bar">
+            <span id="preview-title" style="font-weight: 600;">ตัวอย่างไฟล์</span>
+            <button class="btn-close-preview" id="btn-close-preview">ปิดหน้าต่าง</button>
+        </div>
+        <div class="preview-body">
+            <iframe id="preview-frame" class="preview-frame"></iframe>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <div class="modal-title">ยืนยันตัวตน</div>
+            <div class="modal-subtitle">กรุณากรอกรหัสบัตรประชาชน 13 หลัก เพื่อดาวน์โหลดไฟล์</div>
+            <input type="password" class="modal-input" id="pass-input" placeholder="0000000000000" maxlength="13">
+            <div class="modal-actions">
+                <button class="btn btn-cancel" id="btn-cancel">ยกเลิก</button>
+                <button class="btn btn-confirm" id="btn-confirm">ตกลง</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=1.1"></script>
+</body>
+
+</html>

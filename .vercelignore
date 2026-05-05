@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.git/
+.vercel/
+pass_resume.xlsx
+convert_pass.py
+node_modules/
+.env*
+credentials.json
