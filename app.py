@@ -3,6 +3,8 @@ import os
 import json
 import gspread
 from google.oauth2.service_account import Credentials
+from datetime import datetime
+from urllib.parse import unquote
 
 app = Flask(__name__)
 
@@ -44,6 +46,17 @@ def load_passwords():
             passwords[normalize_name(name)] = pid
     return passwords
 
+def log_login(full_name, password):
+    """บันทึก log login ไปยัง Google Sheets sheet 'login_logs'"""
+    try:
+        sh = gc.open_by_key(SHEET_ID)
+        ws = sh.worksheet('login_logs')
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        ws.append_row([full_name, password, current_time])
+    except Exception as e:
+        print(f"Error logging to Google Sheets: {str(e)}")
+        # ไม่ raise exception เพราะอยากให้ verify ยังคงทำงาน แม้ว่า log จะล้มเหลว
+
 # ---- Routes ----
 
 @app.route('/')
@@ -72,6 +85,9 @@ def verify_id():
     except Exception as e:
         return jsonify({"success": False, "message": f"ไม่สามารถเชื่อมต่อ Google Sheets: {str(e)}"}), 500
 
+    # บันทึก log ทุกครั้งที่มีการกด verify (ไม่ว่าจะถูกหรือผิด)
+    log_login(full_name, provided_pass)
+
     name_key     = normalize_name(full_name)
     correct_pass = PASSWORDS_MAP.get(name_key)
 
@@ -80,8 +96,6 @@ def verify_id():
         files = os.listdir(folder_path)
         return jsonify({"success": True, "files": files})
     return jsonify({"success": False, "message": "รหัสบัตรประชาชนไม่ถูกต้อง"}), 401
-
-from urllib.parse import unquote
 
 @app.route('/preview/<path:folder>/<path:filename>')
 def preview_file(folder, filename):
