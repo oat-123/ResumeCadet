@@ -53,9 +53,11 @@ def log_login(full_name, password):
         ws = sh.worksheet('log')
         current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         ws.append_row([full_name, password, current_time])
+        return True, None
     except Exception as e:
-        print(f"Error logging to Google Sheets: {str(e)}")
-        # ไม่ raise exception เพราะอยากให้ verify ยังคงทำงาน แม้ว่า log จะล้มเหลว
+        error_msg = f"Error logging to Google Sheets: {str(e)}"
+        print(error_msg)
+        return False, error_msg
 
 # ---- Routes ----
 
@@ -86,7 +88,9 @@ def verify_id():
         return jsonify({"success": False, "message": f"ไม่สามารถเชื่อมต่อ Google Sheets: {str(e)}"}), 500
 
     # บันทึก log ทุกครั้งที่มีการกด verify (ไม่ว่าจะถูกหรือผิด)
-    log_login(full_name, provided_pass)
+    log_success, log_error = log_login(full_name, provided_pass)
+    if not log_success:
+        print(f"Failed to log: {log_error}")
 
     name_key     = normalize_name(full_name)
     correct_pass = PASSWORDS_MAP.get(name_key)
