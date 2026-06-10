@@ -47,10 +47,10 @@ def load_passwords():
     return passwords
 
 def log_login(full_name, password):
-    """บันทึก log login ไปยัง Google Sheets sheet 'login_logs'"""
+    """บันทึก log login ไปยัง Google Sheets sheet 'log'"""
     try:
         sh = gc.open_by_key(SHEET_ID)
-        ws = sh.worksheet('login_logs')
+        ws = sh.worksheet('log')
         current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         ws.append_row([full_name, password, current_time])
     except Exception as e:
